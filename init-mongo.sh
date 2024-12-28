@@ -8,7 +8,7 @@ if [ -z "$MONGO_INITDB_ROOT_USERNAME" ] || [ -z "$MONGO_INITDB_ROOT_PASSWORD" ] 
 fi
 
 # Wait for MongoDB to start
-until mongosh --username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase "admin" --eval "print(\"waited for connection\")" > /dev/null 2>&1; do
+until mongosh --username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase "admin" --eval "print(\"waited for connection\")" >/dev/null 2>&1; do
   echo "Waiting for MongoDB to start..."
   sleep 2
 done
@@ -35,8 +35,7 @@ mongodump --host localhost --port 27017 \
   --username "$MONGO_INITDB_ROOT_USERNAME" \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
   --db spacex-api \
-  --authenticationDatabase admin \
-  --out /dump/
+  --authenticationDatabase admin
 
 # Perform restore with specific input location and host
 echo "Starting database restore..."
@@ -45,7 +44,7 @@ mongorestore --host localhost --port 27017 \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
   --db spacex \
   --authenticationDatabase admin \
-  /dump/spacex-api/
+  dump/spacex-api/
 
 # Create a new user
 echo "Creating application user..."
@@ -63,3 +62,4 @@ db.createUser({
 })
 print("Application user created successfully")
 EOF
+
