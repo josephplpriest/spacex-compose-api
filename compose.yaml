@@ -1,0 +1,50 @@
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: AppDockerfile
+    ports:
+      - "6673:6673"
+    volumes:
+      - packagevolume:/app/node_modules
+    depends_on:
+      mongo:
+        condition: service_healthy
+        restart: true
+    environment:
+      - DB_HOST=$DB_HOST
+      - DB_NAME=$DB_NAME
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
+    networks:
+      - app-network
+
+  mongo:
+    image: "mongo:6.0"
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+      - mongodata:/data/db
+      - ./dump:/dump 
+    environment:
+      - MONGO_INITDB_DATABASE=$DB_NAME
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+    networks:
+      - app-network
+
+volumes:
+  packagevolume:
+  mongodata:
+
+networks:
+  app-network:
+    driver: bridge

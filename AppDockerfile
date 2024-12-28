@@ -1,0 +1,23 @@
+FROM node:18-alpine
+
+RUN apk add bash curl
+
+ENV NODE_ENV=production
+
+EXPOSE 6673
+
+RUN addgroup --system spacex
+
+RUN adduser -S -G spacex spacex
+
+USER spacex
+
+WORKDIR /app
+
+COPY --chown=spacex:spacex package.json package-lock.json ./
+
+RUN npm install
+
+COPY --chown=spacex:spacex . .
+
+ENTRYPOINT ["./start.sh"]
