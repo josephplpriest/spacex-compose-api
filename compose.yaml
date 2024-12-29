@@ -4,6 +4,7 @@ services:
     build: 
       context: .
       dockerfile: AppDockerfile
+    container_name: spacex
     ports:
       - "6673:6673"
     volumes:
@@ -12,13 +13,31 @@ services:
       mongo:
         condition: service_healthy
         restart: true
+      cache:
+        condition: service_healthy
     environment:
       - DB_HOST=$DB_HOST
       - DB_NAME=$DB_NAME
       - DB_USERNAME=$DB_USERNAME
       - DB_PASSWORD=$DB_PASSWORD
+      - SPACEX_REDIS=$SPACEX_REDIS
     networks:
       - app-network
+  
+  cache:
+    image: "redis:7.4"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   mongo:
     image: "mongo:6.0"
