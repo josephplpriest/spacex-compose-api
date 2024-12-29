@@ -28,7 +28,7 @@ services:
     volumes:
       - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
       - mongodata:/data/db
-      - ./dump:/dump 
+      - ./dump/spacex.2024-7-5.agz:/spacex.2024-7-5.agz
     environment:
       - MONGO_INITDB_DATABASE=$DB_NAME
       - MONGO_INITDB_ROOT_USERNAME=$DB_USERNAME

@@ -14,7 +14,7 @@ until mongosh --username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB
 done
 
 # Check if the .agz file exists
-AGZ_FILE="/dump/spacex.2024-7-5.agz"
+AGZ_FILE="/spacex.2024-7-5.agz"
 if [ -f "$AGZ_FILE" ]; then
   echo "Found $AGZ_FILE. Restoring data..."
   mongorestore --gzip --archive="$AGZ_FILE" --host localhost --port=27017 --nsInclude="*" \
@@ -29,14 +29,16 @@ else
   echo "No .agz file found at $AGZ_FILE. Skipping data restoration."
 fi
 
+mkdir /tmp/spacex
+
 # Perform dump with specific output location and host
 echo "Starting database dump..."
 mongodump --host localhost --port 27017 \
   --username "$MONGO_INITDB_ROOT_USERNAME" \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
   --db spacex-api \
-  --authenticationDatabase admin
-
+  --authenticationDatabase admin \
+  -o /tmp/spacex
 # Perform restore with specific input location and host
 echo "Starting database restore..."
 mongorestore --host localhost --port 27017 \
@@ -44,7 +46,7 @@ mongorestore --host localhost --port 27017 \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
   --db spacex \
   --authenticationDatabase admin \
-  dump/spacex-api/
+  /tmp/spacex
 
 # Create a new user
 echo "Creating application user..."
@@ -62,4 +64,3 @@ db.createUser({
 })
 print("Application user created successfully")
 EOF
-
