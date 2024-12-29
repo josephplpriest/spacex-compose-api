@@ -48,19 +48,22 @@ mongorestore --host localhost --port 27017 \
   --authenticationDatabase admin \
   /tmp/spacex/spacex-api
 
-# Create a new user
+# Create a new user with unique credentials
 echo "Creating application user..."
 mongosh --host localhost --port 27017 \
   --username "$MONGO_INITDB_ROOT_USERNAME" \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
-  --authenticationDatabase "admin" <<EOF
-use $MONGO_INITDB_DATABASE
+  --authenticationDatabase admin <<EOF
+use admin 
+
 db.createUser({
-  user: "$MONGO_INITDB_ROOT_USERNAME",
-  pwd: "$MONGO_INITDB_ROOT_PASSWORD",
-  roles: [
-    { role: "readWrite", db: "$MONGO_INITDB_DATABASE" }
-  ]
+  user: "$MONGO_INITDB_ROOT_USERNAME", 
+  pwd: "$MONGO_INITDB_ROOT_PASSWORD", 
+  roles: [ 
+    { role: "readWrite", db: "$MONGO_INITDB_DATABASE" }, 
+    { role: "readWrite", db: "auth" } 
+  ] 
 })
+
 print("Application user created successfully")
 EOF
