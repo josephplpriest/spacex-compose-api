@@ -46,7 +46,7 @@ mongorestore --host localhost --port 27017 \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
   --db spacex \
   --authenticationDatabase admin \
-  /tmp/spacex
+  /tmp/spacex/spacex-api
 
 # Create a new user
 echo "Creating application user..."
