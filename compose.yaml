@@ -23,7 +23,12 @@ services:
       - SPACEX_REDIS=$SPACEX_REDIS
     networks:
       - app-network
-  
+    healthcheck:
+      test: ["CMD", "curl", "localhost:6673/v4/admin/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   cache:
     image: "redis:7.4"
     container_name: redis
