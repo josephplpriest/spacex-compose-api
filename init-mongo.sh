@@ -54,7 +54,18 @@ mongosh --host localhost --port 27017 \
   --username "$MONGO_INITDB_ROOT_USERNAME" \
   --password "$MONGO_INITDB_ROOT_PASSWORD" \
   --authenticationDatabase admin <<EOF
-use admin 
+use spacex
+
+db.createUser({
+  user: "$MONGO_INITDB_ROOT_USERNAME", 
+  pwd: "$MONGO_INITDB_ROOT_PASSWORD", 
+  roles: [ 
+    { role: "readWrite", db: "$MONGO_INITDB_DATABASE" }, 
+    { role: "readWrite", db: "auth" } 
+  ] 
+})
+
+use auth
 
 db.createUser({
   user: "$MONGO_INITDB_ROOT_USERNAME", 
